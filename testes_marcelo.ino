@@ -41,17 +41,29 @@ void loop() {
 
   processaCliqueBotao(leituraBotao());
   
-  float temperatura = leituraSensorTemperatura();  
+  //float temperatura = leituraSensorTemperatura();  
+  //ligaRelePelaTemperatura(temperatura);  
+  ligaReleNoHorario(18,13,1);
+  delay(1000);
+  int luminosidade = leituraSensorLuz();
+
+}
+
+void ligaRelePelaTemperatura(int temperatura){
   if(temperatura > 25){
    digitalWrite(releUmPin, LOW,"Ligando rele"); 
   }else{
     digitalWrite(releUmPin, HIGH,"Desligando rele"); 
   }
 
-  int luminosidade = leituraSensorLuz();
-
 }
-
+void ligaReleNoHorario(int hora, int minuto,int tempoLigado){
+  if( rtc.getHour() == hora && rtc.getMinute() == minuto &&  (rtc.getMinute() <= rtc.getMinute()+tempoLigado) ){
+    digitalWrite(releUmPin, LOW,"Ligando rele");
+  }else{
+    digitalWrite(releUmPin, HIGH,"Desligando rele"); 
+  }
+}
 
 void setupPinos(){
   pinMode(ledPin, OUTPUT);
