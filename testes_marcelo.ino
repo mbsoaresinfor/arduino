@@ -41,9 +41,10 @@ void loop() {
 
   processaCliqueBotao(leituraBotao());
   
-  //float temperatura = leituraSensorTemperatura();  
+  float temperatura = leituraSensorTemperatura();  
   //ligaRelePelaTemperatura(temperatura);  
-  ligaReleNoHorario(18,13,1);
+  ligaReleNoHorario(7,50);
+  desligaReleNoHorario(8,05);
   delay(1000);
   int luminosidade = leituraSensorLuz();
 
@@ -57,11 +58,23 @@ void ligaRelePelaTemperatura(int temperatura){
   }
 
 }
-void ligaReleNoHorario(int hora, int minuto,int tempoLigado){
-  if( rtc.getHour() == hora && rtc.getMinute() == minuto &&  (rtc.getMinute() <= rtc.getMinute()+tempoLigado) ){
-    digitalWrite(releUmPin, LOW,"Ligando rele");
-  }else{
-    digitalWrite(releUmPin, HIGH,"Desligando rele"); 
+void ligaReleNoHorario(int hora, int minuto){
+  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
+    String message = "Ligando rele ";
+    message.concat(String(hora));
+    message.concat(String(":"));
+    message.concat(String(minuto));
+    digitalWrite(releUmPin, LOW,message);
+  }
+}
+
+void desligaReleNoHorario(int hora, int minuto){
+  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
+    String message = "Desligando rele ";
+    message.concat(String(hora));
+    message.concat(String(":"));
+    message.concat(String(minuto));
+    digitalWrite(releUmPin, HIGH,message);
   }
 }
 
