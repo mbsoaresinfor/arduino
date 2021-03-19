@@ -42,23 +42,15 @@ void loop() {
   processaCliqueBotao(leituraBotao());
   
   float temperatura = leituraSensorTemperatura();  
-  //ligaRelePelaTemperatura(temperatura);  
-  ligaReleNoHorario(7,50);
-  desligaReleNoHorario(8,05);
-  delay(1000);
   int luminosidade = leituraSensorLuz();
-
-digitalWrite(releUmPin, LOW,"Ligando rele");
-}
-
-void ligaRelePelaTemperatura(int temperatura){
-  if(temperatura > 25){
-   digitalWrite(releUmPin, LOW,"Ligando rele"); 
-  }else{
-    digitalWrite(releUmPin, HIGH,"Desligando rele"); 
-  }
+  //ligaRelePelaTemperatura(temperatura);  
+  //ligaReleNoHorario(7,50);
+  //desligaReleNoHorario(8,05);
+  delay(1000);
 
 }
+
+
 void ligaReleNoHorario(int hora, int minuto){
   if( rtc.getHour() == hora && rtc.getMinute() == minuto){
     String message = "Ligando rele ";
