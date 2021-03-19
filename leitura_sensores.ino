@@ -32,7 +32,7 @@ void setup() {
   setupPinos();
   setupSensorTemperatura();  
   setupServoMotor();
-  //setupClock();
+  setupClock();
 }
 
 void loop() {
@@ -48,6 +48,7 @@ void loop() {
   delay(1000);
   int luminosidade = leituraSensorLuz();
 
+digitalWrite(releUmPin, LOW,"Ligando rele");
 }
 
 void ligaRelePelaTemperatura(int temperatura){
@@ -174,11 +175,11 @@ void setupServoMotor(){
 
 void setupClock(){
   // codigo que deve ser executado para setar o modulo realtime
-  //rtc.initClock();
+ // rtc.initClock();
   //set a time to start with.
   //day, weekday, month, century, year
-  //  rtc.setDate(02, 3, 3, 21, 21);
-  //  //hr, min, sec
-  //  rtc.setTime(14, 38, 00);
+//    rtc.setDate(04, 3, 3, 21, 21);
+//    //hr, min, sec
+//    rtc.setTime(9, 26, 00);
   
 }
