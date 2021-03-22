@@ -12,9 +12,10 @@ const int buttonPin = 12;
 const int ledPin =  13;      
 const int buzzerPin = 10;
 const int sensorTemperaturaPin = 7; // Define pino do sensor
-const int servoPin =  6 ; 
+//const int servoPin =  6 ; 
 const int releUmPin = 5;
 int sensorLuzAnalogicoPin = A0; 
+int sensorChamaPin = A1;
 
 // objetos.
 OneWire oneWire(sensorTemperaturaPin); // Cria um objeto OneWire
@@ -26,27 +27,30 @@ Rtc_Pcf8563 rtc; // realtime
 
 // variaveis diversas.
 int pos; // Posição Servo  
+int TIME_DELAY = 500;
 
 void setup() {
   Serial.begin(9600);   
   setupPinos();
   setupSensorTemperatura();  
-  setupServoMotor();
+ // setupServoMotor();
   setupClock();
 }
 
 void loop() {
-  mostraData();
-  mostraHora();
+ // mostraData();
+ // mostraHora();
 
   processaCliqueBotao(leituraBotao());
   
   float temperatura = leituraSensorTemperatura();  
   int luminosidade = leituraSensorLuz();
+  int chamaCalor = leituraSensorChama();
+  
   //ligaRelePelaTemperatura(temperatura);  
   //ligaReleNoHorario(7,50);
   //desligaReleNoHorario(8,05);
-  delay(1000);
+  delay(TIME_DELAY);
 
 }
 
@@ -77,6 +81,8 @@ void setupPinos(){
   pinMode(buzzerPin,OUTPUT);
   pinMode(releUmPin,OUTPUT);
   digitalWrite(releUmPin, HIGH); 
+  pinMode(sensorChamaPin, INPUT);
+  pinMode(sensorLuzAnalogicoPin, INPUT);
 }
 
 
@@ -125,11 +131,20 @@ int leituraSensorLuz(){
   return ret;
 }
 
+int leituraSensorChama(){
+  int ret =   analogRead(sensorChamaPin);
+  String message = "Chama/Calor: ";
+  message.concat(String(ret));      
+  debug(message); 
+  return ret;
+}
+
+
 float leituraSensorTemperatura(){
   float temperatura = 0;
   sensor.requestTemperatures(); // Envia comando para realizar a conversão de temperatura
   if (!sensor.getAddress(endereco_temp,0)) { // Encontra o endereco do sensor no barramento
-    Serial.println("SENSOR NAO CONECTADO"); // Sensor conectado, imprime mensagem de erro
+    Serial.println("SENSOR TEMPERATURA NAO CONECTADO"); // Sensor conectado, imprime mensagem de erro
   } else {    
     temperatura = sensor.getTempC(endereco_temp);
     String message = "Temperatura: ";
@@ -160,10 +175,10 @@ void setupSensorTemperatura(){
   sensor.begin();  // Inicia o sensor temperatura
 }
 
-void setupServoMotor(){
-  s.attach(servoPin); // inicia servo com sua porta.
-  s.write(0); // Inicia motor posição zero
-}
+//void setupServoMotor(){
+//  s.attach(servoPin); // inicia servo com sua porta.
+//  s.write(0); // Inicia motor posição zero
+//}
 
 void setupClock(){
   // codigo que deve ser executado para setar o modulo realtime
