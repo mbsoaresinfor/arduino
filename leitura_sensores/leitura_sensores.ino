@@ -16,6 +16,7 @@ const int sensorTemperaturaPin = 7; // Define pino do sensor
 const int releUmPin = 5;
 int sensorLuzAnalogicoPin = A0; 
 int sensorChamaPin = A1;
+int sensorInclinacao = 6; 
 
 // objetos.
 OneWire oneWire(sensorTemperaturaPin); // Cria um objeto OneWire
@@ -46,6 +47,7 @@ void loop() {
   float temperatura = leituraSensorTemperatura();  
   int luminosidade = leituraSensorLuz();
   int chamaCalor = leituraSensorChama();
+  int inclinacao = leituraSensorInclinacao();
   
   //ligaRelePelaTemperatura(temperatura);  
   //ligaReleNoHorario(7,50);
@@ -83,6 +85,7 @@ void setupPinos(){
   digitalWrite(releUmPin, HIGH); 
   pinMode(sensorChamaPin, INPUT);
   pinMode(sensorLuzAnalogicoPin, INPUT);
+  pinMode(sensorInclinacao,INPUT);
 }
 
 
@@ -121,6 +124,14 @@ void  processaCliqueBotao(int buttonState){
 
 int leituraBotao(){
   return digitalRead(buttonPin);  
+}
+
+int leituraSensorInclinacao(){
+  int ret =   digitalRead(sensorInclinacao);
+  String message = "Inclinacao: ";
+  message.concat(String(ret));    
+  debug(message); 
+  return ret;
 }
 
 int leituraSensorLuz(){
