@@ -126,6 +126,7 @@ int leituraBotao(){
   return digitalRead(buttonPin);  
 }
 
+// 0 = inclinado, 1 = nao inclinado
 int leituraSensorInclinacao(){
   int ret =   digitalRead(sensorInclinacao);
   String message = "Inclinacao: ";
@@ -134,6 +135,7 @@ int leituraSensorInclinacao(){
   return ret;
 }
 
+// quanto menor, mais luz possui.
 int leituraSensorLuz(){
   int ret =   analogRead(sensorLuzAnalogicoPin);
   String message = "Luminosidade: ";
@@ -142,6 +144,7 @@ int leituraSensorLuz(){
   return ret;
 }
 
+// quanto menor, mais chama existe.
 int leituraSensorChama(){
   int ret =   analogRead(sensorChamaPin);
   String message = "Chama/Calor: ";
