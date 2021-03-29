@@ -42,12 +42,14 @@ void loop() {
  // mostraData();
  // mostraHora();
 
-  processaCliqueBotao(leituraBotao());
-  
   float temperatura = leituraSensorTemperatura();  
   int luminosidade = leituraSensorLuz();
   int chamaCalor = leituraSensorChama();
   int inclinacao = leituraSensorInclinacao();
+
+  if(inclinacao  == 0){
+    toneBuzzer();
+  }
   
   //ligaRelePelaTemperatura(temperatura);  
   //ligaReleNoHorario(7,50);
@@ -106,19 +108,25 @@ void digitalWrite(int pin, int status, String texto){
     Serial.println(texto);
   }
 }
-void  processaCliqueBotao(int buttonState){
-  
-  if (buttonState == HIGH) {
-    
-    digitalWrite(ledPin, HIGH);
+//void  processaCliqueBotao(int buttonState){
+//  
+//  if (buttonState == HIGH) {
+//    
+//    digitalWrite(ledPin, HIGH);
+//    tone(buzzerPin,1000);
+//    delay(500);
+//    noTone(buzzerPin);    
+//    
+//  } else {    
+//    digitalWrite(ledPin, LOW);    
+//  }
+//  
+//}
+
+void toneBuzzer(){
     tone(buzzerPin,1000);
-    delay(500);
-    noTone(buzzerPin);    
-    
-  } else {    
-    digitalWrite(ledPin, LOW);    
-  }
-  
+    delay(1000);
+    noTone(buzzerPin);  
 }
 
 
@@ -159,6 +167,7 @@ float leituraSensorTemperatura(){
   sensor.requestTemperatures(); // Envia comando para realizar a conversão de temperatura
   if (!sensor.getAddress(endereco_temp,0)) { // Encontra o endereco do sensor no barramento
     Serial.println("SENSOR TEMPERATURA NAO CONECTADO"); // Sensor conectado, imprime mensagem de erro
+    toneBuzzer();
   } else {    
     temperatura = sensor.getTempC(endereco_temp);
     String message = "Temperatura: ";
