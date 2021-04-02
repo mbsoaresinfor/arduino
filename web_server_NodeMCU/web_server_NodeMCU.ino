@@ -2,22 +2,21 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include <uri/UriBraces.h>
+#include <uri/UriRegex.h>
 
 const char* ssid = "MBS_EXT";
 const char* password = "10607620";
 
 WebServer server(80);
 
-const int led = 13;
+const int relePin = 23;
 
-void handleRoot() {
-  digitalWrite(led, 1);
-  server.send(200, "text/plain", "hello from esp32!");
-  digitalWrite(led, 0);
+void handleRoot() {  
+  server.send(200, "text/html", menuMain());  
 }
 
-void handleNotFound() {
-  digitalWrite(led, 1);
+void handleNotFound() {  
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -29,13 +28,13 @@ void handleNotFound() {
   for (uint8_t i = 0; i < server.args(); i++) {
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
-  server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
+  server.send(404, "text/html", message);
+  
 }
 
 void setup(void) {
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
+  pinMode(relePin, OUTPUT);    
+      digitalWrite(relePin, HIGH);
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -58,8 +57,16 @@ void setup(void) {
 
   server.on("/", handleRoot);
 
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
+  server.on("/liga", []() {
+    digitalWrite(relePin, LOW);
+    server.send(200, "text/html", menuMain());
+    
+  });
+
+  server.on(UriBraces("/desliga"), []() {        
+    digitalWrite(relePin, HIGH);
+     server.send(200, "text/html", menuMain());
+    
   });
 
   server.onNotFound(handleNotFound);
@@ -71,4 +78,21 @@ void setup(void) {
 void loop(void) {
   server.handleClient();
   delay(2);//allow the cpu to switch to other tasks
+}
+
+String descricaoStatusRele(){
+  int resultado = digitalRead(relePin);
+  if(resultado == HIGH){
+    return "Desligado";
+  }else{
+    return "Ligado";
+  }
+}
+String menuMain(){
+String page = "<!DOCTYPE html><html><meta charset='UTF-8'><body><h2><center>A lampada está: " +  descricaoStatusRele() + 
+      "</br><a href='/liga\'>Ligar </a> </br>" +
+      "<a href='/desliga\'>Desligar </a> </br>" +
+      "</h2></center></body></html>";
+return page;
+  
 }
