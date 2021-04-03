@@ -13,7 +13,7 @@ const int ledPin =  13;
 const int buzzerPin = 10;
 const int sensorTemperaturaPin = 7; // Define pino do sensor
 //const int servoPin =  6 ; 
-const int releUmPin = 5;
+const int pinoSensorOptionReflexivo  = 5;
 int sensorLuzAnalogicoPin = A0; 
 int sensorChamaPin = A1;
 int sensorInclinacao = 6; 
@@ -46,6 +46,7 @@ void loop() {
   int luminosidade = leituraSensorLuz();
   int chamaCalor = leituraSensorChama();
   int inclinacao = leituraSensorInclinacao();
+  int opticoReflexivo = leituraSensorOpticoReflexivo();
 
   if(inclinacao  == 0){
     toneBuzzer();
@@ -59,32 +60,32 @@ void loop() {
 }
 
 
-void ligaReleNoHorario(int hora, int minuto){
-  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
-    String message = "Ligando rele ";
-    message.concat(String(hora));
-    message.concat(String(":"));
-    message.concat(String(minuto));
-    digitalWrite(releUmPin, LOW,message);
-  }
-}
+//void ligaReleNoHorario(int hora, int minuto){
+//  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
+//    String message = "Ligando rele ";
+//    message.concat(String(hora));
+//    message.concat(String(":"));
+//    message.concat(String(minuto));
+//    digitalWrite(releUmPin, LOW,message);
+//  }
+//}
 
-void desligaReleNoHorario(int hora, int minuto){
-  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
-    String message = "Desligando rele ";
-    message.concat(String(hora));
-    message.concat(String(":"));
-    message.concat(String(minuto));
-    digitalWrite(releUmPin, HIGH,message);
-  }
-}
+//void desligaReleNoHorario(int hora, int minuto){
+//  if( rtc.getHour() == hora && rtc.getMinute() == minuto){
+//    String message = "Desligando rele ";
+//    message.concat(String(hora));
+//    message.concat(String(":"));
+//    message.concat(String(minuto));
+//    digitalWrite(releUmPin, HIGH,message);
+//  }
+//}
 
 void setupPinos(){
   pinMode(ledPin, OUTPUT);
   pinMode(buttonPin, INPUT);
   pinMode(buzzerPin,OUTPUT);
-  pinMode(releUmPin,OUTPUT);
-  digitalWrite(releUmPin, HIGH); 
+  pinMode(pinoSensorOptionReflexivo ,INPUT);
+  digitalWrite(pinoSensorOptionReflexivo, LOW);   
   pinMode(sensorChamaPin, INPUT);
   pinMode(sensorLuzAnalogicoPin, INPUT);
   pinMode(sensorInclinacao,INPUT);
@@ -143,7 +144,7 @@ int leituraSensorInclinacao(){
   return ret;
 }
 
-// quanto menor, mais luz possui.
+// quanto maior o valor, mais luz possui.
 int leituraSensorLuz(){
   int ret =   analogRead(sensorLuzAnalogicoPin);
   String message = "Luminosidade: ";
@@ -161,6 +162,14 @@ int leituraSensorChama(){
   return ret;
 }
 
+// TODO nao esta funcionando.
+int leituraSensorOpticoReflexivo(){
+  int ret =   digitalRead(pinoSensorOptionReflexivo);
+  String message = "Optico Refliexivo: ";
+  message.concat(String(ret));      
+  debug(message); 
+  return ret;
+}
 
 float leituraSensorTemperatura(){
   float temperatura = 0;
