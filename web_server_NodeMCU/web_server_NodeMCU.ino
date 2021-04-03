@@ -1,3 +1,7 @@
+// ******* INFORMACOES
+// USAR A PLACA ESP32 DEV MODULE
+// E TAMBEM, PODE SER USADO DOIT ESP DEVKIT V1
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -90,7 +94,7 @@ String descricaoStatusRele(){
 }
 String menuMain(){
 String page = "<!DOCTYPE html><html><meta charset='UTF-8'><body><h2><center>A lampada está: " +  descricaoStatusRele() + 
-      "</br><a href='/liga\'>Ligar </a> </br>" +
+      ".</br><a href='/liga\'>Ligar </a> </br>" +
       "<a href='/desliga\'>Desligar </a> </br>" +
       "</h2></center></body></html>";
 return page;
