@@ -1,5 +1,14 @@
 #include <ThingSpeak.h>
 #include <WiFi.h>
+#include <OneWire.h> // sensor temperatura
+#include <DallasTemperature.h> // sensor temperatura
+
+const int sensorTemperaturaPin = 23;
+
+// objetos 
+OneWire oneWire(sensorTemperaturaPin); // Cria um objeto OneWire
+DallasTemperature sensor(&oneWire); // Informa a referencia da biblioteca dallas temperature para Biblioteca onewire
+DeviceAddress endereco_temp; // Cria um endereco temporario da leitura do sensor
 
 // Network parameters
 const char* ssid     = "MBS_EXT";
@@ -18,7 +27,7 @@ unsigned long lastConnectionTime = 0;
 long lastUpdateTime = 0; 
 WiFiClient client;
 
-int contador = 0;
+
 void setup() {
 
   Serial.begin(9600);
@@ -27,19 +36,11 @@ void setup() {
 }
 
 void loop() {
-    delay(5000);     
-//    if (millis() - lastUpdateTime >=  postingInterval) {
-//        
-//        float fahrenheitTemperature, celsiusTemperature;
-//        
-//        lastUpdateTime = millis();
-//        
-//        float readValue = analogRead(A0);
-//        
-//        Serial.println("temperatura : " + readValue);
-//        writeTSData( channelID , dataFieldOne , readValue );    
-//    }
-  writeTSData( channelID , dataFieldOne , contador++ );  
+    delay(15000);     
+
+  float temperature = leituraSensorTemperatura();
+
+  writeTSData( channelID , dataFieldOne , temperature );  
 }
 
 void connectWiFi(){
@@ -84,4 +85,19 @@ int write2TSData( long TSChannel, unsigned int TSField1, float field1Data, unsig
    
   int writeSuccess = ThingSpeak.writeFields( TSChannel, writeAPIKey );
   return writeSuccess;
+}
+
+float leituraSensorTemperatura(){
+  float temperatura = 0;
+  sensor.requestTemperatures(); // Envia comando para realizar a conversão de temperatura
+  if (!sensor.getAddress(endereco_temp,0)) { // Encontra o endereco do sensor no barramento
+    Serial.println("SENSOR TEMPERATURA NAO CONECTADO"); // Sensor conectado, imprime mensagem de erro    
+  } else {    
+    temperatura = sensor.getTempC(endereco_temp);
+    String message = "Temperatura: ";
+    message.concat(String(temperatura));
+    message.concat(" C");
+    Serial.println(message);  
+  }
+  return temperatura;
 }
