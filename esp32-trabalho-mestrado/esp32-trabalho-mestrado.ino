@@ -4,7 +4,8 @@
 #include <DallasTemperature.h> // sensor temperatura
 #include <HTTPClient.h>
 
-const int sensorTemperaturaPin = 23;
+const int sensorTemperaturaPin = 22;
+const int relePin = 23;
 
 // objetos 
 OneWire oneWire(sensorTemperaturaPin); // Cria um objeto OneWire
@@ -19,18 +20,30 @@ unsigned long lastConnectionTime = 0;
 long lastUpdateTime = 0; 
 WiFiClient client;
 
+const float temperaturaIdeal = 20;
+
 String endpoint_update = "http://192.168.0.12:8080/update";
 
 void setup() {
 
   Serial.begin(9600);
   Serial.println("Start");
+  pinMode(relePin, OUTPUT);
   connectWiFi();
 }
 
 void loop() {
-    
+
+   Serial.print("Temperatura Ideal => " );  
+   Serial.println( temperaturaIdeal );  
   float temperature = leituraSensorTemperatura();
+  if(temperature < temperaturaIdeal){
+    digitalWrite(relePin, HIGH, "LIGANDO LAMPADA");         
+  }else{
+    digitalWrite(relePin, LOW, "DESLIGANDO LAMPADA");             
+  }
+
+  leituraRele(relePin);
 
   if(WiFi.status()== WL_CONNECTED){
      Serial.println("WiFi Connected");
@@ -77,6 +90,22 @@ void connectWiFi(){
  
 }
 
+void digitalWrite(int pin, int status, String texto){
+  int statusAtual = digitalRead(pin);
+  if(statusAtual != status){
+    digitalWrite(pin, status);   
+    Serial.println(texto);
+  }
+}
+
+void leituraRele(int pin){
+  int statusAtual = digitalRead(pin);  
+  if(statusAtual == HIGH){    
+    Serial.println("LAMPADA ESTA LIGADA");
+  }else{
+    Serial.println("LAMPADA ESTA DESLIGADA");
+  }
+}
 
 float leituraSensorTemperatura(){
   float temperatura = 0;
@@ -85,7 +114,7 @@ float leituraSensorTemperatura(){
     Serial.println("SENSOR TEMPERATURA NAO CONECTADO"); // Sensor conectado, imprime mensagem de erro    
   } else {    
     temperatura = sensor.getTempC(endereco_temp);
-    String message = "Temperatura: ";
+    String message = "Temperatura Atual = ";
     message.concat(String(temperatura));
     message.concat(" C");
     Serial.println(message);  
